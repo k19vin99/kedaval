@@ -1,0 +1,81 @@
+/* Fondo oscuro detrás del popup */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Caja del popup */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  padding: 25px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.25s ease;
+}
+
+.modal-content h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #6a0dad;
+  margin-bottom: 12px;
+}
+
+.modal-content p {
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+/* Botones del popup */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+/* Botón cancelar */
+.modal-actions .btn-cancelar {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.modal-actions .btn-cancelar:hover {
+  background-color: #ccc;
+}
+
+/* Botón eliminar */
+.modal-actions .btn-eliminar {
+  background-color: #d32f2f;
+  color: #fff;
+}
+
+.modal-actions .btn-eliminar:hover {
+  background-color: #b71c1c;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
