@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Navbar from "../../components/Navbar";
-import "../../assets/styles/FormularioEditar.css";
+import "../../assets/styles/FormEdit.css";
 import { useParams, useNavigate } from "react-router-dom";
+import { UserContext } from "../../UserContext";
 
-const FormularioEditarStore = () => {
+const FormEditStore = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [store, setStore] = useState(null);
   const [companies, setCompanies] = useState([]);
+  const { user } = useContext(UserContext);
 
   // Cargar datos de la sucursal
   useEffect(() => {
-    fetch(`http://localhost:3001/api/stores/${id}`)
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:3001/api/stores/${id}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    })
       .then((res) => res.json())
       .then((data) => setStore(data))
       .catch((err) => console.error("Error al cargar sucursal:", err));
@@ -19,7 +24,10 @@ const FormularioEditarStore = () => {
 
   // Cargar listado de empresas
   useEffect(() => {
-    fetch("http://localhost:3001/api/companies")
+    const token = localStorage.getItem("token");
+    fetch("http://localhost:3001/api/companies", {
+      headers: { "Authorization": `Bearer ${token}` }
+    })
       .then((res) => res.json())
       .then((data) => setCompanies(data))
       .catch((err) => console.error("Error al cargar empresas:", err));
@@ -27,9 +35,13 @@ const FormularioEditarStore = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
     fetch(`http://localhost:3001/api/stores/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify(store),
     })
       .then((res) => res.json())
@@ -52,24 +64,33 @@ const FormularioEditarStore = () => {
             {Object.keys(store).map((campo) => {
               if (campo === "id") return null;
 
-              // Campo especial para empresa_id
               if (campo === "empresa_id") {
                 return (
                   <div key={campo} className="form-group">
                     <label>Empresa</label>
-                    <select
-                      value={store.empresa_id || ""}
-                      onChange={(e) =>
-                        setStore({ ...store, empresa_id: e.target.value })
-                      }
-                    >
-                      <option value="">Seleccione una empresa</option>
-                      {companies.map((company) => (
-                        <option key={company.id} value={company.id}>
-                          {company.nombre}
-                        </option>
-                      ))}
-                    </select>
+                    {user?.rol === "admin" ? (
+                      <select
+                        value={store.empresa_id || ""}
+                        onChange={(e) =>
+                          setStore({ ...store, empresa_id: e.target.value })
+                        }
+                      >
+                        <option value="">Seleccione una empresa</option>
+                        {companies.map((company) => (
+                          <option key={company.id} value={company.id}>
+                            {company.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={
+                          companies.find((c) => c.id === store.empresa_id)?.nombre || "—"
+                        }
+                        disabled
+                      />
+                    )}
                   </div>
                 );
               }
@@ -105,4 +126,4 @@ const FormularioEditarStore = () => {
   );
 };
 
-export default FormularioEditarStore;
+export default FormEditStore;

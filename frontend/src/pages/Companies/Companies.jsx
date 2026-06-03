@@ -4,6 +4,8 @@ import { FaTrash, FaEdit, FaPlus, FaList } from "react-icons/fa";
 import "../../assets/styles/TableStyles.css";
 import { useNavigate } from "react-router-dom";
 import StoresPopup from "../Stores/StoresPopup";
+import CompanyUsersPopup from "./CompanyUsersPopup";
+import DropCompany from "./DropCompany";
 
 const Companies = () => {
   const [companies, setCompanies] = useState([]);
@@ -11,16 +13,51 @@ const Companies = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [empresaSeleccionada, setEmpresaSeleccionada] = useState(null);
+  const [empresaUsuarios, setEmpresaUsuarios] = useState(null);
+  const [companyEliminar, setCompanyEliminar] = useState(null);
+  const [message, setMessage] = useState("");
 
   const tableRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/companies")
-      .then((res) => res.json())
-      .then((data) => setCompanies(data))
-      .catch((err) => console.error("Error al obtener empresas:", err));
+    const token = localStorage.getItem("token");
+    fetch("http://localhost:3001/api/companies", {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errMsg = await res.text();
+          throw new Error(errMsg || "Error al obtener empresas");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Empresas recibidas:", data);
+        setCompanies(data);
+      })
+      .catch((err) => {
+        console.error("Error al obtener empresas:", err);
+        setMessage("No se pudieron cargar las empresas");
+      });
   }, []);
+
+  const handleDeleteConfirm = (id) => {
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:3001/api/companies/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then(() => {
+        setCompanies(companies.filter((c) => c.id !== id));
+        setCompanyEliminar(null);
+      })
+      .catch((err) => console.error("Error al eliminar empresa:", err));
+  };
 
   const filteredCompanies = companies.filter((c) =>
     `${c.id} ${c.rut} ${c.nombre} ${c.razon_social} ${c.direccion}`
@@ -38,6 +75,7 @@ const Companies = () => {
       <Navbar />
       <div style={{ padding: "20px" }}>
         <h2>Listado de Empresas</h2>
+        {message && <p style={{ color: "red" }}>{message}</p>}
 
         {/* Fila superior */}
         <div className="table-topbar">
@@ -74,6 +112,7 @@ const Companies = () => {
                 <th>Razón Social</th>
                 <th>Dirección</th>
                 <th>Sucursales</th>
+                <th>Personal</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -90,11 +129,16 @@ const Companies = () => {
                       <FaList /> Ver Sucursales
                     </button>
                   </td>
+                  <td>
+                    <button onClick={() => setEmpresaUsuarios(c)}>
+                      <FaList /> Ver Personal
+                    </button>
+                  </td>
                   <td style={{ textAlign: "center" }}>
-                    <button onClick={() => navigate(`/EditarCompany/${c.id}`)}>
+                    <button onClick={() => navigate(`/home/EditCompany/${c.id}`)}>
                       <FaEdit />
                     </button>
-                    <button>
+                    <button onClick={() => setCompanyEliminar(c)}>
                       <FaTrash />
                     </button>
                   </td>
@@ -104,7 +148,7 @@ const Companies = () => {
               {/* Rellenar filas vacías */}
               {Array.from({ length: Math.max(0, 5 - currentCompanies.length) }).map((_, i) => (
                 <tr key={`empty-${i}`}>
-                  <td colSpan="7" style={{ textAlign: "center", color: "#aaa" }}>
+                  <td colSpan="8" style={{ textAlign: "center", color: "#aaa" }}>
                     — Vacío —
                   </td>
                 </tr>
@@ -129,7 +173,7 @@ const Companies = () => {
         {/* Botón Añadir Empresa */}
         <div style={{ textAlign: "right" }}>
           <button
-            onClick={() => navigate("/AddCompany")}
+            onClick={() => navigate("/home/AddCompany")}
             className="add-btn"
           >
             <FaPlus /> Añadir Empresa
@@ -140,6 +184,18 @@ const Companies = () => {
       {/* Popup Sucursales */}
       {empresaSeleccionada && (
         <StoresPopup empresa={empresaSeleccionada} onClose={() => setEmpresaSeleccionada(null)} />
+      )}
+      {/* Popup Personal */}
+      {empresaUsuarios && (
+        <CompanyUsersPopup empresa={empresaUsuarios} onClose={() => setEmpresaUsuarios(null)} />
+      )}
+      {/* Popup Eliminar */}
+      {companyEliminar && (
+        <DropCompany
+          company={companyEliminar}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setCompanyEliminar(null)}
+        />
       )}
     </div>
   );

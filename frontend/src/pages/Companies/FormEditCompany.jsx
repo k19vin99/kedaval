@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
-import "../../assets/styles/FormularioEditar.css";
+import "../../assets/styles/FormEdit.css";
 import { useParams, useNavigate } from "react-router-dom";
 
 const FormEditCompany = () => {

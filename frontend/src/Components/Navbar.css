@@ -11,6 +11,11 @@
   padding: 12px 20px;
   box-sizing: border-box;
 }
+.user-info {
+  margin-left: 20px;
+  font-weight: bold;
+  color: #ffd700; /* amarillo para destacar */
+}
 
 .navbar-brand {
   font-weight: bold;

@@ -1,11 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const authMiddleware = require("../middleware/authMiddleware");
 
-// Obtener todas las empresas
-router.get("/", async (req, res) => {
+// Middleware para verificar rol
+function verificarRol(req, res, next) {
+  const user = req.user;
+  if (!user) return res.status(401).send("No autenticado");
+  req.rol = user.rol;
+  req.empresa_id = user.empresa_id;
+  next();
+}
+
+// 📌 Obtener empresas
+router.get("/", authMiddleware, verificarRol, async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM companies ORDER BY id ASC");
+    let result;
+    if (req.rol === "admin" && !req.empresa_id) {
+      // Admin global → todas las empresas
+      result = await pool.query("SELECT * FROM companies ORDER BY id ASC");
+    } else {
+      // Usuarios normales o admin ligado a empresa → solo su empresa
+      result = await pool.query("SELECT * FROM companies WHERE id = $1", [req.empresa_id]);
+    }
     res.json(result.rows);
   } catch (err) {
     console.error(err.message);
@@ -13,20 +30,25 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Obtener empresa por ID
-router.get("/:id", async (req, res) => {
+// 📌 Obtener empresa por ID
+router.get("/:id", authMiddleware, verificarRol, async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query("SELECT * FROM companies WHERE id = $1", [id]);
-    res.json(result.rows[0]);
+    if (req.rol === "admin" || req.empresa_id == id) {
+      const result = await pool.query("SELECT * FROM companies WHERE id = $1", [id]);
+      res.json(result.rows[0]);
+    } else {
+      res.status(403).send("No autorizado");
+    }
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Error al obtener empresa");
   }
 });
 
-// Crear nueva empresa
-router.post("/", async (req, res) => {
+// 📌 Crear nueva empresa (solo admin global)
+router.post("/", authMiddleware, verificarRol, async (req, res) => {
+  if (req.rol !== "admin" || req.empresa_id) return res.status(403).send("No autorizado");
   const { rut, nombre, razon_social, direccion, telefono, email, giro, codigo_sii } = req.body;
   try {
     const result = await pool.query(
@@ -41,8 +63,9 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Editar empresa
-router.put("/:id", async (req, res) => {
+// 📌 Editar empresa (solo admin global)
+router.put("/:id", authMiddleware, verificarRol, async (req, res) => {
+  if (req.rol !== "admin" || req.empresa_id) return res.status(403).send("No autorizado");
   const { id } = req.params;
   const { rut, nombre, razon_social, direccion, telefono, email, giro, codigo_sii, estado } = req.body;
   try {
@@ -58,8 +81,9 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Eliminar empresa
-router.delete("/:id", async (req, res) => {
+// 📌 Eliminar empresa (solo admin global)
+router.delete("/:id", authMiddleware, verificarRol, async (req, res) => {
+  if (req.rol !== "admin" || req.empresa_id) return res.status(403).send("No autorizado");
   const { id } = req.params;
   try {
     await pool.query("DELETE FROM companies WHERE id=$1", [id]);
@@ -67,16 +91,6 @@ router.delete("/:id", async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Error al eliminar empresa");
-  }
-});
-router.get("/byCompany/:empresa_id", async (req, res) => {
-  const { empresa_id } = req.params;
-  try {
-    const result = await pool.query("SELECT * FROM stores WHERE empresa_id = $1 ORDER BY id ASC", [empresa_id]);
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Error al obtener sucursales de la empresa");
   }
 });
 

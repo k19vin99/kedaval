@@ -1,7 +1,7 @@
 import React from "react";
-import "../../assets/styles/Eliminar.css"; // 👈 único CSS
+import "../../assets/styles/Drop.css"; // 👈 único CSS
 
-const EliminarUsuarioPopup = ({ usuario, onConfirm, onCancel }) => {
+const DropUserPopup = ({ usuario, onConfirm, onCancel }) => {
   if (!usuario) return null;
 
   return (
@@ -22,4 +22,4 @@ const EliminarUsuarioPopup = ({ usuario, onConfirm, onCancel }) => {
   );
 };
 
-export default EliminarUsuarioPopup;
+export default DropUserPopup;

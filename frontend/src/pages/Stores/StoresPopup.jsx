@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../assets/styles/Eliminar.css";
+import "../../assets/styles/Drop.css";
 
 const StoresPopup = ({ empresa, onClose }) => {
   const [sucursales, setSucursales] = useState([]);

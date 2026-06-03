@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../../Components/Navbar";
 import { useNavigate } from "react-router-dom";
 
-const FormularioRegistroUsuario = () => {
+const FormAddUser = () => {
   const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
+  const [empresas, setEmpresas] = useState([]);
 
   const [nuevoUsuario, setNuevoUsuario] = useState({
     primer_nombre: "",
@@ -16,20 +17,29 @@ const FormularioRegistroUsuario = () => {
     fecha_nacimiento: "",
     email: "",
     password: "",
-    rol_id: null,   // 👈 solo usamos rol_id
+    rol_id: null,
+    empresa_id: null,
   });
 
   // Cargar roles desde backend
   useEffect(() => {
-    fetch("http://localhost:3001/api/usuarios/roles")
+    fetch("http://localhost:3001/api/users/roles")
       .then((res) => res.json())
       .then((data) => setRoles(data))
       .catch((err) => console.error("Error al obtener roles:", err));
   }, []);
 
+  // Cargar empresas desde backend
+  useEffect(() => {
+    fetch("http://localhost:3001/api/users/empresas")
+      .then((res) => res.json())
+      .then((data) => setEmpresas(data))
+      .catch((err) => console.error("Error al obtener empresas:", err));
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("http://localhost:3001/api/usuarios", {
+    fetch("http://localhost:3001/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(nuevoUsuario),
@@ -37,7 +47,7 @@ const FormularioRegistroUsuario = () => {
       .then((res) => res.json())
       .then(() => {
         alert("Usuario agregado correctamente");
-        navigate("/home/usuarios");
+        navigate("/home/users");
       })
       .catch((err) => console.error("Error al agregar usuario:", err));
   };
@@ -99,6 +109,24 @@ const FormularioRegistroUsuario = () => {
               </select>
             </div>
 
+            {/* Campo especial: Empresa */}
+            <div className="form-group">
+              <label>Empresa</label>
+              <select
+                value={nuevoUsuario.empresa_id || ""}
+                onChange={(e) =>
+                  setNuevoUsuario({ ...nuevoUsuario, empresa_id: parseInt(e.target.value) })
+                }
+              >
+                <option value="">Seleccione una empresa</option>
+                {empresas.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <button type="submit" className="btn-guardar">
               Guardar Usuario
             </button>
@@ -109,4 +137,4 @@ const FormularioRegistroUsuario = () => {
   );
 };
 
-export default FormularioRegistroUsuario;
+export default FormAddUser;

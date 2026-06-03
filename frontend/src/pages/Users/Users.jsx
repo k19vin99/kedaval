@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { FaTrash, FaEdit, FaPlus } from "react-icons/fa";
-import EliminarUsuarioPopup from "../Usuarios/EliminarUsuario"; 
+import EliminarUsuarioPopup from "./DropUser"; 
 import "../../assets/styles/TableStyles.css";
 import { useNavigate } from "react-router-dom";
 
-const Usuarios = () => {
+const Users = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [search, setSearch] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -14,13 +14,13 @@ const Usuarios = () => {
   const tableRef = useRef(null);
   const navigate = useNavigate();
   useEffect(() => {
-    fetch("http://localhost:3001/api/usuarios")
+    fetch("http://localhost:3001/api/users")
     .then((res) => res.json())
     .then((data) => setUsuarios(data))
     .catch((err) => console.error("Error al obtener usuarios:", err));
   }, []);
   const handleDeleteConfirm = (id) => {
-    fetch(`http://localhost:3001/api/usuarios/${id}`, { method: "DELETE" })
+    fetch(`http://localhost:3001/api/users/${id}`, { method: "DELETE" })
     .then(() => {
       setUsuarios(usuarios.filter((u) => u.id !== id));
       setUsuarioEliminar(null);
@@ -28,10 +28,11 @@ const Usuarios = () => {
     .catch((err) => console.error("Error al eliminar usuario:", err));
   };
   const filteredUsuarios = usuarios.filter((u) =>
-    `${u.id} ${u.email} ${u.role}`
-  .toLowerCase()
-  .includes(search.toLowerCase())
-);
+    `${u.id} ${u.email} ${u.rol_nombre}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
 
 const indexOfLast = currentPage * rowsPerPage;
 const indexOfFirst = indexOfLast - rowsPerPage;
@@ -105,6 +106,7 @@ return (
                 <th>Fecha Nacimiento</th>
                 <th>Email</th>
                 <th>Rol</th>
+                <th>Empresa</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -121,9 +123,10 @@ return (
                   <td>{u.direccion}</td>
                   <td>{u.fecha_nacimiento}</td>
                   <td>{u.email}</td>
-                  <td>{u.role}</td>
+                  <td>{u.rol_nombre}</td>
+                  <td>{u.empresa_nombre}</td>
                   <td style={{ textAlign: "center" }}>
-                    <button onClick={() => navigate(`/EditarUsuario/${u.id}`)}>
+                    <button onClick={() => navigate(`/home/FormEditUser/${u.id}`)}>
                       <FaEdit />
                     </button>
                     <button onClick={() => setUsuarioEliminar(u)}>
@@ -145,7 +148,7 @@ return (
         </div>
         {/* Botón Añadir Usuario abajo a la derecha */}
         <div style={{ marginTop: "15px" }}>
-          <button onClick={() => navigate("/AddUsuario")} className="add-btn" > 
+          <button onClick={() => navigate("/home/AddUser")} className="add-btn" > 
             <FaPlus /> Añadir Usuario
           </button>
         </div>
@@ -162,4 +165,4 @@ return (
   );
 };
 
-export default Usuarios;
+export default Users;

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
-import "../../assets/styles/FormularioRegistro.css"; // 👈 mismo CSS que productos
+import "../../assets/styles/FormAdd.css"; // 👈 mismo CSS que productos
 import { useNavigate } from "react-router-dom";
 
-const FormularioRegistroStore = () => {
+const FormAddStore = () => {
   const navigate = useNavigate();
 
   const [nuevaSucursal, setNuevaSucursal] = useState({
@@ -63,4 +63,4 @@ const FormularioRegistroStore = () => {
   );
 };
 
-export default FormularioRegistroStore;
+export default FormAddStore;

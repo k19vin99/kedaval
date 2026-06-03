@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { FaTrash, FaEdit, FaPlus } from "react-icons/fa";
-import EliminarStorePopup from "./EliminarStore"; 
+import DropStorePopup from "./DropStore"; 
 import "../../assets/styles/TableStyles.css";
 import { useNavigate } from "react-router-dom";
 
@@ -14,6 +14,24 @@ const Stores = () => {
 
   const tableRef = useRef(null);
   const navigate = useNavigate();
+
+ useEffect(() => {
+  const token = localStorage.getItem("token");
+    fetch("http://localhost:3001/api/stores", {
+      headers: { "Authorization": `Bearer ${token}` }
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errMsg = await res.text();
+          throw new Error(errMsg || "Error al obtener sucursales");
+        }
+        return res.json();
+      })
+      .then((data) => setStores(data))
+      .catch((err) => console.error("Error al obtener sucursales:", err));
+  }, []);
+
+
 
   // Obtener datos reales desde backend
   useEffect(() => {
@@ -134,7 +152,7 @@ const Stores = () => {
                   <td>{s.direccion}</td>
                   <td>{s.empresa_nombre || "—"}</td>
                   <td style={{ textAlign: "center" }}>
-                    <button onClick={() => navigate(`/EditarStore/${s.id}`)}>
+                    <button onClick={() => navigate(`/home/EditStore/${s.id}`)}>
                       <FaEdit />
                     </button>
                     <button onClick={() => setStoreEliminar(s)}>
@@ -164,7 +182,7 @@ const Stores = () => {
         {/* Botón Añadir Sucursal */}
         <div style={{ textAlign: "right" }}>
           <button
-            onClick={() => navigate("/AddStore")}
+            onClick={() => navigate("/home/AddStore")}
             className="add-btn"
           >
             <FaPlus /> Añadir Sucursal
@@ -174,7 +192,7 @@ const Stores = () => {
 
       {/* Popup Eliminar */}
       {storeEliminar && (
-        <EliminarStorePopup
+        <DropStorePopup
           store={storeEliminar}
           onConfirm={handleDeleteConfirm}
           onCancel={() => setStoreEliminar(null)}

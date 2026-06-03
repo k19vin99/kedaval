@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import "../assets/styles/Login.css"; // 👈 nuevo archivo CSS
+import { UserContext } from "../UserContext";   // 👈 importar contexto
+import "../assets/styles/Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);  // 👈 acceder al contexto
 
   const handleLogin = async () => {
     try {
@@ -16,9 +18,20 @@ function Login() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (res.ok) {
+
+     if (res.ok) {
+        localStorage.setItem("token", data.token); // guardar token
+        setUser({
+          id: data.id,
+          email: data.email,
+          primer_nombre: data.primer_nombre,
+          primer_apellido: data.primer_apellido,
+          empresa_nombre: data.empresa_nombre,
+          rol: data.rol,
+        });
         navigate("/home");
-      } else {
+      }
+ else {
         setMessage(data.message);
       }
     } catch (err) {
@@ -49,10 +62,7 @@ function Login() {
           className="login-input"
         />
 
-        <button
-          onClick={handleLogin}
-          className="login-button"
-        >
+        <button onClick={handleLogin} className="login-button">
           Iniciar Sesión
         </button>
 

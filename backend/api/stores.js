@@ -1,17 +1,39 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db"); // conexión a PostgreSQL
+const authMiddleware = require("../middleware/authMiddleware");
 
-// Obtener todas las sucursales
-// Obtener todas las sucursales con nombre de empresa
-router.get("/", async (req, res) => {
+// Middleware para verificar rol
+function verificarRol(req, res, next) {
+  const user = req.user;
+  if (!user) return res.status(401).send("No autenticado");
+  req.rol = user.rol;
+  req.empresa_id = user.empresa_id;
+  next();
+}
+
+// 📌 Obtener sucursales según rol
+router.get("/", authMiddleware, verificarRol, async (req, res) => {
   try {
-    const result = await pool.query(`
-      SELECT s.id, s.numero_sucursal, s.nombre_sucursal, s.direccion, s.empresa_id, c.nombre AS empresa_nombre
-      FROM stores s
-      LEFT JOIN companies c ON s.empresa_id = c.id
-      ORDER BY s.id ASC
-    `);
+    let result;
+    if (req.rol === "admin" && !req.empresa_id) {
+      // Admin global → todas las sucursales
+      result = await pool.query(`
+        SELECT s.id, s.numero_sucursal, s.nombre_sucursal, s.direccion, s.empresa_id, c.nombre AS empresa_nombre
+        FROM stores s
+        LEFT JOIN companies c ON s.empresa_id = c.id
+        ORDER BY s.id ASC
+      `);
+    } else {
+      // Usuarios normales o admin ligado a empresa → solo sucursales de su empresa
+      result = await pool.query(`
+        SELECT s.id, s.numero_sucursal, s.nombre_sucursal, s.direccion, s.empresa_id, c.nombre AS empresa_nombre
+        FROM stores s
+        LEFT JOIN companies c ON s.empresa_id = c.id
+        WHERE s.empresa_id = $1
+        ORDER BY s.id ASC
+      `, [req.empresa_id]);
+    }
     res.json(result.rows);
   } catch (err) {
     console.error(err.message);

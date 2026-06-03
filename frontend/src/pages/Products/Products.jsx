@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { FaTrash, FaEdit, FaPlus } from "react-icons/fa";
-import EliminarProductoPopup from "../Productos/EliminarProducto"; 
+import DropProductPopup from "./DropProduct"; 
 import "../../assets/styles/TableStyles.css";
 import { useNavigate } from "react-router-dom";
 
-const Productos = () => {
+const Products = () => {
   const [productos, setProductos] = useState([]);
   const [search, setSearch] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -15,15 +15,36 @@ const Productos = () => {
   const tableRef = useRef(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch("http://localhost:3001/api/productos")
-      .then((res) => res.json())
+  // Cargar productos desde backend
+  // Cargar productos desde backend
+useEffect(() => {
+  const token = localStorage.getItem("token");
+    fetch("http://localhost:3001/api/products", {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errMsg = await res.text();
+          throw new Error(errMsg || "Error al obtener productos");
+        }
+        return res.json();
+      })
       .then((data) => setProductos(data))
       .catch((err) => console.error("Error al obtener productos:", err));
   }, []);
 
+
+  // Confirmar eliminación
   const handleDeleteConfirm = (id) => {
-    fetch(`http://localhost:3001/api/productos/${id}`, { method: "DELETE" })
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:3001/api/products/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
       .then(() => {
         setProductos(productos.filter((p) => p.id !== id));
         setProductoEliminar(null);
@@ -31,16 +52,18 @@ const Productos = () => {
       .catch((err) => console.error("Error al eliminar producto:", err));
   };
 
+
+  // Filtrado
   const filteredProductos = productos.filter((p) =>
     `${p.id} ${p.codigo_barra} ${p.nombre} ${p.descripcion} ${p.categoria} ${p.marca}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
+  // Paginación
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentProductos = filteredProductos.slice(indexOfFirst, indexOfLast);
-
   const totalPages = Math.ceil(filteredProductos.length / rowsPerPage);
 
   // Resize columnas
@@ -122,6 +145,8 @@ const Productos = () => {
                 <th>Marca</th>
                 <th>Precio Compra</th>
                 <th>Precio Venta</th>
+                <th>Sucursal</th>
+                <th>Empresa</th>
                 <th>Stock Actual</th>
                 <th>Stock Mínimo</th>
                 <th>Unidad Medida</th>
@@ -133,7 +158,7 @@ const Productos = () => {
             </thead>
             <tbody>
               {currentProductos.map((p) => (
-                <tr key={p.id}>
+                <tr key={`${p.id}-${p.sucursal_id}`}>
                   <td>{p.id}</td>
                   <td>{p.codigo_barra}</td>
                   <td>{p.nombre}</td>
@@ -142,6 +167,8 @@ const Productos = () => {
                   <td>{p.marca}</td>
                   <td>{p.precio_compra}</td>
                   <td>{p.precio_venta}</td>
+                  <td>{p.nombre_sucursal || "—"}</td>
+                  <td>{p.empresa_nombre || "—"}</td> 
                   <td>{p.stock_actual}</td>
                   <td>{p.stock_minimo}</td>
                   <td>{p.unidad_medida}</td>
@@ -149,7 +176,7 @@ const Productos = () => {
                   <td>{p.porcentaje_iva}</td>
                   <td>{p.codigo_sii}</td>
                   <td style={{ textAlign: "center" }}>
-                    <button onClick={() => navigate(`/EditarProducto/${p.id}`)}>
+                    <button onClick={() => navigate(`/home/FormEditProduct/${p.id}`)}>
                       <FaEdit />
                     </button>
                     <button onClick={() => setProductoEliminar(p)}>
@@ -159,10 +186,10 @@ const Productos = () => {
                 </tr>
               ))}
 
-              {/* 👇 Rellenar filas vacías hasta llegar a 5 */}
+              {/* Rellenar filas vacías */}
               {Array.from({ length: Math.max(0, 5 - currentProductos.length) }).map((_, i) => (
                 <tr key={`empty-${i}`}>
-                  <td colSpan="15" style={{ textAlign: "center", color: "#aaa" }}>
+                  <td colSpan="16" style={{ textAlign: "center", color: "#aaa" }}>
                     — Vacío —
                   </td>
                 </tr>
@@ -187,7 +214,7 @@ const Productos = () => {
         {/* Botón Añadir Producto */}
         <div style={{ textAlign: "right" }}>
           <button
-            onClick={() => navigate("/AddProducto")}
+            onClick={() => navigate("/home/AddProduct")}
             className="add-btn"
           >
             <FaPlus /> Añadir Producto
@@ -197,7 +224,7 @@ const Productos = () => {
 
       {/* Popup Eliminar */}
       {productoEliminar && (
-        <EliminarProductoPopup
+        <DropProductPopup
           producto={productoEliminar}
           onConfirm={handleDeleteConfirm}
           onCancel={() => setProductoEliminar(null)}
@@ -207,4 +234,4 @@ const Productos = () => {
   );
 };
 
-export default Productos;
+export default Products;
