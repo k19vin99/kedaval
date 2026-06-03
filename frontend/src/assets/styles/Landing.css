@@ -10,8 +10,11 @@
 
 .landing-container {
   font-family: "MoveKedavalMedium", sans-serif;
-  background: #fff;
-  color: #000;
+  background: linear-gradient(to right, #6a0dad, #000000);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Navbar */
@@ -20,10 +23,10 @@
   justify-content: space-between;
   padding: 15px 30px;
   background-color: #6a0dad;
-  color: #fff;
 }
 
 .landing-logo {
+  margin: 0;
   font-family: "MoveKedavalBold", sans-serif;
 }
 
@@ -36,23 +39,22 @@
   font-weight: bold;
 }
 
-/* Hero Slider */
+/* Hero */
 .landing-hero {
   text-align: center;
   padding: 80px 20px;
-  background: linear-gradient(to right, #6a0dad, #000);
-  color: #fff;
 }
 
 .landing-title {
   font-family: "MoveKedavalBold", sans-serif;
   font-size: 40px;
+  margin-bottom: 20px;
 }
 
 .landing-subtitle {
   font-size: 18px;
   max-width: 600px;
-  margin: 20px auto;
+  margin: 0 auto 30px;
 }
 
 .landing-cta {
@@ -64,36 +66,18 @@
   font-weight: bold;
 }
 
-/* Casos de éxito */
-.landing-success {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.success-card {
-  background-color: #f9f9f9;
-  padding: 20px;
-  margin: 10px auto;
-  border-radius: 8px;
-  max-width: 500px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
 /* Features */
 .landing-features {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.feature-grid {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
+  padding: 40px 20px;
 }
 
 .feature-card {
   background-color: #fff;
+  color: #000;
   border-radius: 10px;
   padding: 20px;
   width: 220px;
@@ -103,49 +87,13 @@
 
 .feature-card h3 {
   font-family: "MoveKedavalBold", sans-serif;
-}
-
-/* Careers */
-.landing-careers {
-  padding: 60px 20px;
-  text-align: center;
-  background-color: #f3f3f3;
-}
-
-/* Clients */
-.landing-clients {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.client-logos {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-}
-
-.client-logo {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
 }
 
 /* Footer */
 .landing-footer {
-  background-color: #6a0dad;
-  color: #fff;
-  padding: 40px 20px;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.footer-bottom {
   text-align: center;
-  font-size: 14px;
+  padding: 20px;
+  background-color: #6a0dad;
+  margin-top: auto;
 }

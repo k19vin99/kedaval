@@ -1,16 +1,19 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../UserContext";   // 👈 importar contexto
+import { UserContext } from "../UserContext";  
 import "../assets/styles/Login.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa"
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);  // 👈 acceder al contexto
+  const { setUser } = useContext(UserContext);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault(); // 👈 evita recarga
     try {
       const res = await fetch("http://localhost:3001/api/login", {
         method: "POST",
@@ -19,8 +22,8 @@ function Login() {
       });
       const data = await res.json();
 
-     if (res.ok) {
-        localStorage.setItem("token", data.token); // guardar token
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
         setUser({
           id: data.id,
           email: data.email,
@@ -30,8 +33,7 @@ function Login() {
           rol: data.rol,
         });
         navigate("/home");
-      }
- else {
+      } else {
         setMessage(data.message);
       }
     } catch (err) {
@@ -42,34 +44,43 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2 className="login-title">Iniciar Sesión</h2>
+        <h2 className="login-title">Bienvenido al Sistema Kedaval</h2>
+        <form onSubmit={handleLogin}>
+          <label className="login-label">Correo Electrónico</label>
+          <input
+            type="email"
+            placeholder="ejemplo@correo.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="login-input"
+          />
 
-        <label className="login-label">Correo Electrónico</label>
-        <input
-          type="email"
-          placeholder="ejemplo@correo.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="login-input"
-        />
+          <label className="login-label">Contraseña</label>
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="login-input"
+            />
+            <span
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
 
-        <label className="login-label">Contraseña</label>
-        <input
-          type="password"
-          placeholder="********"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="login-input"
-        />
-
-        <button onClick={handleLogin} className="login-button">
-          Iniciar Sesión
-        </button>
-
+          <button type="submit" className="login-button">
+            Iniciar Sesión
+          </button>
+        </form>
         {message && <p className="login-message">{message}</p>}
       </div>
     </div>
   );
 }
+
 
 export default Login;
