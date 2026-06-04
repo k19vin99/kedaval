@@ -1,99 +1,136 @@
-@font-face {
-  font-family: "MoveKedavalBold";
-  src: url("../assets/fonts/MoveKedavalBold.otf") format("opentype");
-}
-
-@font-face {
-  font-family: "MoveKedavalMedium";
-  src: url("../assets/fonts/MoveKedavalMedium.otf") format("opentype");
-}
-
 .landing-container {
   font-family: "MoveKedavalMedium", sans-serif;
   background: linear-gradient(to right, #6a0dad, #000000);
   color: #fff;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background-attachment: fixed; /* Fondo fijo */
 }
 
 /* Navbar */
 .landing-navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #6a0dad;
   display: flex;
   justify-content: space-between;
-  padding: 15px 30px;
-  background-color: #6a0dad;
+  align-items: center;
+  padding: 15px 40px;
+  z-index: 1000;
 }
 
 .landing-logo {
-  margin: 0;
   font-family: "MoveKedavalBold", sans-serif;
+  color: #fff;
+  cursor: pointer;
+}
+
+.landing-sections a {
+  margin: 0 15px;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.landing-sections a:hover {
+  transform: scale(1.1);
+  color: #f5f5f5;
 }
 
 .landing-login-btn {
   background-color: #fff;
-  color: #6a0dad;
-  padding: 10px 20px;
-  border-radius: 5px;
+  color: #fff;
+  border: 2px solid #000;
+  border-radius: 20px;
+  padding: 8px 16px;
   text-decoration: none;
   font-weight: bold;
+  transition: all 0.3s ease;
 }
 
-/* Hero */
-.landing-hero {
+.landing-login-btn:hover {
+  background-color: #6a0dad;
+  color: #fff;
+  border: 2px solid #fff;
+  transform: scale(1.1);
+}
+
+/* Secciones */
+.landing-section {
+  height: 100vh;
+  padding: 100px 20px;
   text-align: center;
-  padding: 80px 20px;
 }
 
-.landing-title {
-  font-family: "MoveKedavalBold", sans-serif;
-  font-size: 40px;
-  margin-bottom: 20px;
-}
-
-.landing-subtitle {
-  font-size: 18px;
-  max-width: 600px;
-  margin: 0 auto 30px;
-}
-
-.landing-cta {
-  background-color: #fff;
-  color: #6a0dad;
-  padding: 12px 24px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-/* Features */
-.landing-features {
+/* Cards */
+.card-grid {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
   gap: 20px;
-  padding: 40px 20px;
+  flex-wrap: wrap;
 }
 
-.feature-card {
-  background-color: #fff;
-  color: #000;
+.card {
   border-radius: 10px;
   padding: 20px;
   width: 220px;
   text-align: center;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
 }
 
-.feature-card h3 {
-  font-family: "MoveKedavalBold", sans-serif;
-  margin-bottom: 10px;
+.card:hover {
+  transform: translateY(-5px);
 }
 
+.white-card {
+  background-color: #fff;
+  color: #000;
+}
+
+.gray-card {
+  background-color: #333;
+  color: #fff;
+}
+
+.black-card {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Contacto */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+.contact-form button {
+  background-color: #6a0dad;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contact-form button:hover {
+  background-color: #fff;
+  color: #6a0dad;
+  border: 2px solid #6a0dad;
+  transform: scale(1.05);
+}
 /* Footer */
 .landing-footer {
-  text-align: center;
-  padding: 20px;
   background-color: #6a0dad;
-  margin-top: auto;
+  padding: 20px;
+  text-align: center;
 }

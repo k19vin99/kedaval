@@ -7,81 +7,95 @@ function Landing() {
     <div className="landing-container">
       {/* Navbar */}
       <nav className="landing-navbar">
-        <h2 className="landing-logo">Kedaval POS</h2>
+        <div className="landing-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+          KEDAVAL
+        </div>
+        <div className="landing-sections">
+          <a href="#servicios">Servicios</a>
+          <a href="#casos">Casos de éxito</a>
+          <a href="#tecnologia">Tecnología compatible</a>
+          <a href="#respaldo">Respaldo</a>
+          <a href="#contacto">Contacto</a>
+        </div>
         <Link to="/login" className="landing-login-btn">
           Iniciar Sesión
         </Link>
       </nav>
 
-      {/* Hero Slider */}
-      <section className="landing-hero">
-        <div className="slider">
-          <div className="slide active">
-            <h1 className="landing-title">Bienvenido a Kedaval</h1>
-            <p className="landing-subtitle">
-              Sistema POS e inventario responsivo con integración SII.
-            </p>
-            <Link to="/login" className="landing-cta">Comenzar Ahora</Link>
+      {/* Hero */}
+      <section id="hero" className="landing-section landing-hero">
+        <h1 className="landing-title">Bienvenido a Kedaval</h1>
+        <p className="landing-subtitle">
+          Sistema POS e inventario responsivo con integración SII.
+        </p>
+        
+        </section>
+
+      {/* Servicios */}
+      <section id="servicios" className="landing-section">
+        <h2 className="section-title">Servicios</h2>
+        <div className="card-grid">
+          <div className="card white-card">
+            <h3>Inventario</h3>
+            <p>Gestión completa de productos y stock.</p>
           </div>
-          {/* Aquí puedes añadir más slides con imágenes corporativas */}
+          <div className="card gray-card">
+            <h3>Facturación</h3>
+            <p>Integración directa con SII.</p>
+          </div>
+          <div className="card black-card">
+            <h3>Sucursales</h3>
+            <p>Administra múltiples locales fácilmente.</p>
+          </div>
         </div>
       </section>
 
       {/* Casos de éxito */}
-      <section className="landing-success">
+      <section id="casos" className="landing-section">
         <h2 className="section-title">Casos de Éxito</h2>
-        <div className="success-slider">
-          <div className="success-card">
+        <div className="card-grid">
+          <div className="card white-card">
             <p>"Empresa X aumentó sus ventas un 30% con Kedaval."</p>
           </div>
-          <div className="success-card">
+          <div className="card gray-card">
             <p>"Empresa Y redujo tiempos de facturación en un 50%."</p>
           </div>
         </div>
       </section>
 
-      {/* Partes del sistema */}
-      <section className="landing-features">
-        <h2 className="section-title">Partes del Sistema</h2>
-        <div className="feature-grid">
-          <div className="feature-card">
-            <h3>📦 Inventario</h3>
-            <p>Gestión completa de productos y stock.</p>
-          </div>
-          <div className="feature-card">
-            <h3>🧾 Facturación</h3>
-            <p>Integración directa con SII.</p>
-          </div>
-          <div className="feature-card">
-            <h3>🏬 Sucursales</h3>
-            <p>Administra múltiples locales fácilmente.</p>
-          </div>
-          <div className="feature-card">
-            <h3>👥 Usuarios</h3>
-            <p>Roles y permisos personalizados.</p>
-          </div>
+      {/* Tecnología compatible */}
+      <section id="tecnologia" className="landing-section">
+        <h2 className="section-title">Tecnología Compatible</h2>
+        <div className="card-grid">
+          <div className="card white-card">Windows</div>
+          <div className="card gray-card">Android</div>
+          <div className="card black-card">Equipos móviles</div>
         </div>
       </section>
 
-      {/* Trabaja con nosotros */}
-      <section className="landing-careers">
-        <h2 className="section-title">Trabaja con Nosotros</h2>
-        <p>Únete al equipo Kedaval y sé parte de la innovación.</p>
-        <Link to="/careers" className="landing-cta">Ver Oportunidades</Link>
+      {/* Respaldo */}
+      <section id="respaldo" className="landing-section">
+        <h2 className="section-title">Respaldo</h2>
+        <div className="card-grid">
+          <div className="card white-card">SII</div>
+          <div className="card gray-card">Transbank</div>
+          <div className="card black-card">Empresas asociadas</div>
+        </div>
       </section>
 
-      {/* Clientes */}
-      <section className="landing-clients">
-        <h2 className="section-title">Clientes que confían en nosotros</h2>
-        <div className="client-logos">
-          <div className="client-logo">Logo A</div>
-          <div className="client-logo">Logo B</div>
-          <div className="client-logo">Logo C</div>
-        </div>
+      {/* Contacto */}
+      <section id="contacto" className="landing-section">
+        <h2 className="section-title">Contacto</h2>
+        <form className="contact-form">
+          <input type="text" placeholder="Nombre" />
+          <input type="email" placeholder="Correo" />
+          <textarea placeholder="Mensaje"></textarea>
+          <button type="button">Enviar</button>
+        </form>
       </section>
 
       {/* Footer */}
-      <footer className="landing-footer">
+      <footer id="footer" className="landing-footer">
         <div className="footer-content">
           <div>
             <h3>Kedaval POS</h3>
